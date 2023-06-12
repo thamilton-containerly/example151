@@ -1,0 +1,23 @@
+name: cookiecutter
+
+on: ["push"]
+
+jobs:
+  
+  cookiecutter:
+    if: ${{ github.repository != 'containerly/cookiecutter-python-http-fast' }}
+    runs-on: ubuntu-latest
+    steps:
+    # - run: |
+    #     echo "    project_name: ${{ github.repository }}" >> config.yaml
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Version range or exact version of a Python version to use
+    - run: pip install cookiecutter
+    - run: cookiecutter https://github.com/containerly/cookiecutter-python-http-fast --no-input --project_name ${{ github.repository }}
+    - run: mv ${GITHUB_REPOSITORY#*/}/* .
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "cookiecutter"
+        push_options: --force
